@@ -1,5 +1,5 @@
 # Install & Upgrade
 
 ```
-bash <(curl -Ls https://github.com/parhamiano/install-xray-panel/blob/main/install)
+bash <(curl -Ls https://raw.githubusercontent.com/parhamiano/install-xray-panel/refs/heads/main/install)
 ```
