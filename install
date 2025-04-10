@@ -1,26 +1,11 @@
 #!/bin/bash
 
-# مرحله اول: بروزرسانی و پاک‌سازی پکیج‌ها
-echo "مرحله 1: آپدیت و ارتقای سیستم..."
-apt-get update && apt-get upgrade -y && apt-get dist-upgrade -y && apt-get autoremove -y && apt-get autoclean -y
+# اضافه کردن به /etc/security/limits.conf
+echo "* soft nofile 51200" | sudo tee -a /etc/security/limits.conf
+echo "* hard nofile 51200" | sudo tee -a /etc/security/limits.conf
 
-# مرحله دوم: نصب پکیج‌های مورد نیاز
-echo "مرحله 2: نصب پکیج‌ها..."
-apt-get install -y software-properties-common ufw wget curl git socat cron busybox bash-completion locales nano apt-utils
-
-# مرحله سوم: اضافه کردن مقادیر nofile به limits.conf
-echo "مرحله 3: تنظیم nofile در limits.conf..."
-LIMITS_FILE="/etc/security/limits.conf"
-echo -e "\n* soft nofile 51200\n* hard nofile 51200" | sudo tee -a "$LIMITS_FILE"
-
-# مرحله چهارم: تنظیم ulimit
-echo "مرحله 4: تنظیم ulimit..."
-ulimit -n 51200
-
-# مرحله پنجم: اضافه کردن تنظیمات شبکه به sysctl.conf مربوط به ufw
-echo "مرحله 5: اضافه کردن تنظیمات به sysctl.conf..."
-SYSCTL_FILE="/etc/ufw/sysctl.conf"
-sudo tee -a "$SYSCTL_FILE" > /dev/null <<EOF
+# اضافه کردن به /etc/ufw/sysctl.conf
+sudo tee -a /etc/ufw/sysctl.conf > /dev/null <<EOL
 
 fs.file-max = 51200
 net.core.rmem_max = 67108864
@@ -41,6 +26,6 @@ net.ipv4.tcp_rmem = 4096 87380 67108864
 net.ipv4.tcp_wmem = 4096 65536 67108864
 net.ipv4.tcp_mtu_probing = 1
 net.ipv4.tcp_congestion_control = hybla
-EOF
+EOL
 
-echo "✅ تمام مراحل با موفقیت انجام شد!"
+echo "تنظیمات با موفقیت به فایل‌ها اضافه شد."
