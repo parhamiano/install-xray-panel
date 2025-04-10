@@ -1,10 +1,26 @@
 #!/bin/bash
 
-# اضافه کردن به /etc/security/limits.conf
+# Update the system
+echo "Starting system update..."
+sudo sh -c 'apt-get update && apt-get upgrade -y && apt-get dist-upgrade -y && apt-get autoremove -y && apt-get autoclean -y'
+echo "✅ System update completed."
+
+# Install required packages
+echo "Installing required packages..."
+sudo apt-get install -y software-properties-common ufw wget curl git socat cron busybox bash-completion locales nano apt-utils
+echo "✅ Package installation completed."
+
+# Add to /etc/security/limits.conf
+echo "Applying settings to limits.conf..."
 echo "* soft nofile 51200" | sudo tee -a /etc/security/limits.conf
 echo "* hard nofile 51200" | sudo tee -a /etc/security/limits.conf
 
-# اضافه کردن به /etc/ufw/sysctl.conf
+# Apply temporary ulimit in this terminal session
+ulimit -n 51200
+echo "✅ ulimit -n 51200 executed."
+
+# Add to /etc/ufw/sysctl.conf
+echo "Adding settings to sysctl.conf..."
 sudo tee -a /etc/ufw/sysctl.conf > /dev/null <<EOL
 
 fs.file-max = 51200
@@ -28,4 +44,4 @@ net.ipv4.tcp_mtu_probing = 1
 net.ipv4.tcp_congestion_control = hybla
 EOL
 
-echo "تنظیمات با موفقیت به فایل‌ها اضافه شد."
+echo "✅ sysctl.conf settings applied successfully."
