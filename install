@@ -1,28 +1,13 @@
 sudo apt update && sudo apt install -y expect && expect <(cat <<'EOF'
 #!/usr/bin/expect -f
-# فایل: run_with_enter.expect
-# این اسکریپت expect را اجرا می‌کند و یکبار Enter ارسال می‌کند
-# هنگام اجرای نصب 3x-ui
+# نصب 3x-ui بدون ارسال Enter خودکار
 
-set timeout 30
+set timeout -1
 
-# اجرای دستور اصلی نصب
+# اجرای اسکریپت اصلی نصب
 spawn /bin/bash -c {bash <(curl -Ls https://raw.githubusercontent.com/mhsanaei/3x-ui/master/install.sh)}
 
-# منتظر پیام درخواست اینتر می‌مانیم، یا پس از timeout خودکار Enter می‌فرستیم
-expect {
-    -re "(Press Enter|Press any key|Any key to continue|Press any key to continue|برای ادامه Enter|Enter to continue)" {
-        send "\r"
-    }
-    timeout {
-        send "\r"
-    }
-    eof {
-        # اسکریپت تمام شد
-    }
-}
-
-# وصل شدن به ترمینال برای ادامه تعامل کاربر
+# فقط تعامل مستقیم با کاربر
 interact
 EOF
 )
