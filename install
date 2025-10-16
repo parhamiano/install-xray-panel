@@ -92,3 +92,5 @@ echo -e "\e[32m---------------------------------------------\e[0m"
 # چاپ لینک VLESS با نام دامنه واردشده
 echo -e "\e[33mvless://6384deb7-955e-4d67-bc04-d73b86e0ac38@${IP}:40999?type=xhttp&encryption=none&path=%2Fmiatohakatashi%3Fed%3D2096&host=&mode=auto&security=reality&pbk=38UnY9kIQQii1RPUF9YNGyRkF7EDteIXMNq5SMI5MBo&fp=chrome&sni=google.com&sid=dbb247acf8e5&spx=%2Fnihato#Reality-VPN-${SUBDOMAIN}\e[0m"
 echo -e "\e[33m---------------------------------------------\e[0m"
+echo -e "\e[33mvless://279542bd-49cf-45dd-9077-e66b6c7e8262@198.41.208.218:2087?encryption=none&security=tls&sni=$DOMAIN&alpn=h3&fp=chrome&allowInsecure=1&type=xhttp&host=$DOMAIN&path=%2Futd%3Fed%3D2087&mode=auto#VPN-${SUBDOMAIN}\e[0m"
+echo -e "\e[33m---------------------------------------------\e[0m"
