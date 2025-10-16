@@ -76,6 +76,22 @@ echo "Waiting 3 seconds before starting x-ui setup..."
 sleep 3
 
 
+# بررسی هم‌خوانی IP دامنه
+echo "⏳ در حال بررسی اتصال دامنه..."
+while true; do
+    DOMAIN_IP=$(dig +short "$DOMAIN" | tail -n1)
+    if [[ "$DOMAIN_IP" == "$IP" ]]; then
+        echo "✅ دامنه ${DOMAIN} با IP ${IP} هماهنگ شد!"
+        break
+    else
+        echo "❌ هنوز هماهنگ نیست. مقدار فعلی IP دامنه: ${DOMAIN_IP:-N/A}"
+        echo "⏱️ صبر می‌کنیم 3 ثانیه دیگر..."
+        sleep 3
+    fi
+done
+
+
+
 EMAIL="your-email@example.com"
 WEB_PORT="80"
 
