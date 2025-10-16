@@ -5,8 +5,14 @@ sudo apt update && sudo apt install -y expect curl
 # دریافت دامنه از کاربر
 read -p "Enter your domain (e.g. uk2.dadklnad.com): " DOMAIN
 
+
+
 # استخراج بخش اول دامنه (قبل از اولین نقطه)
 SUBDOMAIN=$(echo "$DOMAIN" | cut -d'.' -f1)
+CLOUDFLARE_API_TOKEN="your_cloudflare_api_token_here"
+ZONE_NAME="mrkheyrabadi.top"
+IP=$(curl -s ifconfig.me)
+
 
 # نصب 3x-ui با پاسخ خودکار
 expect <(cat <<'EOF'
@@ -82,8 +88,7 @@ sudo sed -i "s/de3\.mrkheyrabadi\.top/${DOMAIN}/g" /etc/x-ui/x-ui.db
 x-ui start
 x-ui restart
 
-# دریافت IP سرور
-IP=$(curl -s ifconfig.me)
+
 
 # چاپ خروجی رنگی سبز
 echo -e "\e[32m---------------------------------------------\e[0m"
