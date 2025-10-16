@@ -28,46 +28,45 @@ EOF
 echo "Waiting 3 seconds before starting x-ui setup..."
 sleep 3
 
-# اجرای x-ui و زدن مراحل به‌صورت کورکورانه + نمایش مراحل روی ترمینال
-expect <<EOF
-set timeout -1
-log_user 1   ;# فعال کردن نمایش همه ورودی/خروجی‌ها در ترمینال
-spawn bash -c "x-ui"
 
-puts "\n[+] Starting x-ui setup...\n"
+EMAIL="your-email@example.com"
+WEB_PORT="80"
 
-# کمی صبر برای بالا آمدن منو
-sleep 2
-puts "\n[+] Sending option 18"
-send "18\r"
+echo "📦 در حال نصب ابزارهای لازم..."
+curl https://get.acme.sh | sh
+source ~/.bashrc
 
-sleep 1
-puts "\n[+] Sending option 1"
-send "1\r"
+# نصب socat بر اساس سیستم عامل
+if command -v apt-get &> /dev/null; then
+    apt-get update && apt-get install socat -y
+elif command -v yum &> /dev/null; then
+    yum update && yum install socat -y
+elif command -v apk &> /dev/null; then
+    apk add socat
+fi
 
-sleep 1
-puts "\n[+] Sending domain: $DOMAIN"
-send "$DOMAIN\r"
+echo "🔧 تنظیم حساب Let's Encrypt..."
+~/.acme.sh/acme.sh --set-default-ca --server letsencrypt
+~/.acme.sh/acme.sh --register-account -m $EMAIL
 
-sleep 1
-puts "\n[+] Sending port: 80"
-send "80\r"
+echo "📝 دریافت گواهی SSL برای $DOMAIN..."
+mkdir -p /root/cert/$DOMAIN
 
-sleep 1
-puts "\n[+] Sending 'n' for reloadcmd"
-send "n\r"
+~/.acme.sh/acme.sh --issue -d $DOMAIN --standalone --httpport $WEB_PORT
 
-sleep 1
-puts "\n[+] Sending 'n' for certificate panel"
-send "n\r"
+echo "💾 نصب گواهی..."
+~/.acme.sh/acme.sh --installcert -d $DOMAIN \
+    --key-file /root/cert/$DOMAIN/privkey.pem \
+    --fullchain-file /root/cert/$DOMAIN/fullchain.pem \
+    --reloadcmd "systemctl restart x-ui"
 
+echo "✅ فعال‌سازی تمدید خودکار..."
+~/.acme.sh/acme.sh --upgrade --auto-upgrade
 
+echo "🎉 دریافت SSL با موفقیت انجام شد!"
+echo "📍 مسیر گواهی: /root/cert/$DOMAIN/"
+echo "🔑 فایل‌ها: fullchain.pem, privkey.pem"
 
-puts "\n[+] Done!"
-interact
-EOF
-
-echo "done"
 
 # توقف x-ui
 x-ui stop
