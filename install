@@ -12,7 +12,7 @@ SUBDOMAIN=$(echo "$DOMAIN" | cut -d'.' -f1)
 BASE_DOMAIN=$(echo "$DOMAIN" | awk -F. '{print $(NF-1)"."$NF}')
 
 
-CLOUDFLARE_API_TOKEN="your_cloudflare_api_token_here"
+CLOUDFLARE_API_TOKEN="208l2F67-tK0ukqAXvZoKDz4jf-2InMs8MSG2ZsPD5"
 ZONE_NAME="$BASE_DOMAIN"
 IP=$(curl -s ifconfig.me)
 
