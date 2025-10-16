@@ -34,7 +34,7 @@ IP=$(curl -s ifconfig.me)
 
 # چاپ خروجی رنگی سبز
 echo -e "\e[32m---------------------------------------------\e[0m"
-echo -e "\e[32murl = http://${IP}:4040/kim/kardashina\e[0m"
+echo -e "\e[32murl = http://${IP}:4040/kim/kardashinan\e[0m"
 echo -e "\e[32musername = sysadmin\e[0m"
 echo -e "\e[32mpassword = 14741575\e[0m"
 echo -e "\e[32m---------------------------------------------\e[0m"
