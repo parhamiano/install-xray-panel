@@ -9,14 +9,14 @@ spawn /bin/bash -c {bash <(curl -Ls https://raw.githubusercontent.com/mhsanaei/3
 
 # وقتی سوال پورت ظاهر شد، "n" و Enter بفرست
 expect {
-    -re "Would you like to customize the Panel Port settings\\?.*\\[y/n\\]:" {
+    -re {Would you like to customize the Panel Port settings.*\[y/n\]:} {
         send "n\r"
         exp_continue
     }
     eof
 }
 
-# بعد از پاسخ خودکار، تعامل مستقیم با کاربر ادامه دارد
+# بعد از پاسخ خودکار، کنترل را به کاربر بده
 interact
 EOF
 )
