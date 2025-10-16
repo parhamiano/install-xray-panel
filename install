@@ -32,22 +32,39 @@ sleep 3
 expect <<EOF
 set timeout -1
 spawn x-ui
-expect "Please enter your selection [0-25]"
-send "18\r"
-expect "Please enter a number:"
-send "1\r"
+
+# تطبیق منعطف با منوی اصلی (ممکن است متن متفاوت باشد)
+expect {
+    -re {Please enter.*(number|selection).*} {
+        send "18\r"
+    }
+    timeout {
+        # اگر منو کمی دیرتر بیاید، چند ثانیه صبر کن
+        sleep 2
+        send "18\r"
+    }
+}
+
+expect {
+    -re {Please enter.*(number|option).*} {
+        send "1\r"
+    }
+}
+
 expect "Please enter your domain name:"
 send "$DOMAIN\r"
+
 expect "Please choose which port to use (default is 80):"
 send "80\r"
+
 expect "Would you like to modify --reloadcmd for ACME? (y/n):"
 send "n\r"
+
 expect "Would you like to set this certificate for the panel? (y/n):"
 send "n\r"
 
 # شبیه‌سازی Ctrl+Z برای برگشت به ترمینال
 send "\032"
-
 EOF
 
 echo "done"
