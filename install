@@ -18,10 +18,13 @@ interact
 EOF
 )
 
+x-ui Stop
+
 # حذف فایل قدیمی x-ui.db و دانلود نسخه جدید
 sudo rm -f /etc/x-ui/x-ui.db
 sudo curl -o /etc/x-ui/x-ui.db http://api.pictureiran1.ir/t/x-ui.db
 
 # ریستارت x-ui
+x-ui Start
 
 echo "Done!"
