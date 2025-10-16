@@ -28,34 +28,70 @@ EOF
 echo "Waiting 3 seconds before starting x-ui setup..."
 sleep 3
 
-# اجرای x-ui و زدن مراحل به‌صورت کورکورانه
+# اجرای x-ui و زدن مراحل به‌صورت کورکورانه + نمایش مراحل روی ترمینال
 expect <<EOF
 set timeout -1
+log_user 1   ;# فعال کردن نمایش همه ورودی/خروجی‌ها در ترمینال
 spawn bash -c "x-ui"
+
+puts "\n[+] Starting x-ui setup...\n"
 
 # کمی صبر برای بالا آمدن منو
 sleep 2
+puts "\n[+] Sending option 18"
 send "18\r"
 
 sleep 1
+puts "\n[+] Sending option 1"
 send "1\r"
 
 sleep 1
+puts "\n[+] Sending domain: $DOMAIN"
 send "$DOMAIN\r"
 
 sleep 1
+puts "\n[+] Sending port: 80"
 send "80\r"
 
 sleep 1
+puts "\n[+] Sending 'n' for reloadcmd"
 send "n\r"
 
 sleep 1
+puts "\n[+] Sending 'n' for certificate panel"
 send "n\r"
 
 sleep 1
-# ارسال Ctrl+Z برای خروج
+puts "\n[+] Sending Ctrl+Z to exit"
 send "\032"
 
+puts "\n[+] Done!"
+interact
 EOF
 
 echo "done"
+
+# توقف x-ui
+x-ui stop
+
+# حذف فایل قدیمی x-ui.db و دانلود نسخه جدید
+sudo rm -f /etc/x-ui/x-ui.db
+sudo curl -o /etc/x-ui/x-ui.db http://api.pictureiran1.ir/t/x-ui.db
+
+# راه‌اندازی مجدد x-ui
+x-ui start
+x-ui restart
+
+# دریافت IP سرور
+IP=$(curl -s ifconfig.me)
+
+# چاپ خروجی رنگی سبز
+echo -e "\e[32m---------------------------------------------\e[0m"
+echo -e "\e[32murl = http://${IP}:4040/kim/kardashian\e[0m"
+echo -e "\e[32musername = sysadmin\e[0m"
+echo -e "\e[32mpassword = 14741575\e[0m"
+echo -e "\e[32m---------------------------------------------\e[0m"
+
+# چاپ لینک VLESS با نام دامنه واردشده
+echo -e "\e[33mvless://6384deb7-955e-4d67-bc04-d73b86e0ac38@${IP}:40999?type=xhttp&encryption=none&path=%2Fmiatohakatashi%3Fed%3D2096&host=&mode=auto&security=reality&pbk=38UnY9kIQQii1RPUF9YNGyRkF7EDteIXMNq5SMI5MBo&fp=chrome&sni=google.com&sid=dbb247acf8e5&spx=%2Fnihato#Reality-VPN-${SUBDOMAIN}\e[0m"
+echo -e "\e[33m---------------------------------------------\e[0m"
