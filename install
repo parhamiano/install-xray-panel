@@ -61,9 +61,7 @@ sleep 1
 puts "\n[+] Sending 'n' for certificate panel"
 send "n\r"
 
-sleep 1
-puts "\n[+] Sending Ctrl+Z to exit"
-send "\032"
+
 
 puts "\n[+] Done!"
 interact
