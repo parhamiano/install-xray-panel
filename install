@@ -24,10 +24,14 @@ interact
 EOF
 )
 
-x-ui
+# تاخیر ۳ ثانیه‌ای قبل از اجرای تنظیمات x-ui
+echo "Waiting 3 seconds before starting x-ui setup..."
+sleep 3
 
 # اجرای x-ui و انجام مراحل گواهی SSL با پاسخ خودکار
 expect <<EOF
+set timeout -1
+spawn x-ui
 expect "Please enter a number:"
 send "18\r"
 expect "Please enter a number:"
