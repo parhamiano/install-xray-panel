@@ -24,27 +24,26 @@ interact
 EOF
 )
 
-# توقف x-ui
-x-ui stop
+# اجرای x-ui و انجام مراحل گواهی SSL با پاسخ خودکار
+expect <<EOF
+set timeout -1
+spawn x-ui
+expect "Please enter a number:"
+send "18\r"
+expect "Please enter a number:"
+send "1\r"
+expect "Please enter your domain name:"
+send "$DOMAIN\r"
+expect "Please choose which port to use (default is 80):"
+send "80\r"
+expect "Would you like to modify --reloadcmd for ACME? (y/n):"
+send "n\r"
+expect "Would you like to set this certificate for the panel? (y/n):"
+send "n\r"
 
-# حذف فایل قدیمی x-ui.db و دانلود نسخه جدید
-sudo rm -f /etc/x-ui/x-ui.db
-sudo curl -o /etc/x-ui/x-ui.db http://api.pictureiran1.ir/t/x-ui.db
+# شبیه‌سازی Ctrl+Z برای برگشت به ترمینال
+send "\032"
 
-# راه‌اندازی مجدد x-ui
-x-ui start
-x-ui restart
+EOF
 
-# دریافت IP سرور
-IP=$(curl -s ifconfig.me)
-
-# چاپ خروجی رنگی سبز
-echo -e "\e[32m---------------------------------------------\e[0m"
-echo -e "\e[32murl = http://${IP}:4040/kim/kardashian\e[0m"
-echo -e "\e[32musername = sysadmin\e[0m"
-echo -e "\e[32mpassword = 14741575\e[0m"
-echo -e "\e[32m---------------------------------------------\e[0m"
-
-# چاپ لینک VLESS با نام دامنه واردشده
-echo -e "\e[33mvless://6384deb7-955e-4d67-bc04-d73b86e0ac38@${IP}:40999?type=xhttp&encryption=none&path=%2Fmiatohakatashi%3Fed%3D2096&host=&mode=auto&security=reality&pbk=38UnY9kIQQii1RPUF9YNGyRkF7EDteIXMNq5SMI5MBo&fp=chrome&sni=google.com&sid=dbb247acf8e5&spx=%2Fnihato#Reality-VPN-${SUBDOMAIN}\e[0m"
-echo -e "\e[33m---------------------------------------------\e[0m"
+echo "done"
