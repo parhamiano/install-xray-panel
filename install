@@ -1,13 +1,22 @@
 sudo apt update && sudo apt install -y expect && expect <(cat <<'EOF'
 #!/usr/bin/expect -f
-# نصب 3x-ui بدون ارسال Enter خودکار
+# نصب 3x-ui با پاسخ خودکار به سوال پورت پنل
 
 set timeout -1
 
 # اجرای اسکریپت اصلی نصب
 spawn /bin/bash -c {bash <(curl -Ls https://raw.githubusercontent.com/mhsanaei/3x-ui/master/install.sh)}
 
-# فقط تعامل مستقیم با کاربر
+# وقتی سوال پورت ظاهر شد، "n" و Enter بفرست
+expect {
+    -re "Would you like to customize the Panel Port settings\\?.*\\[y/n\\]:" {
+        send "n\r"
+        exp_continue
+    }
+    eof
+}
+
+# بعد از پاسخ خودکار، تعامل مستقیم با کاربر ادامه دارد
 interact
 EOF
 )
