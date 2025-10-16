@@ -1,47 +1,28 @@
-#!/bin/bash
+#!/usr/bin/expect -f
+# فایل: run_with_enter.expect
+# اجرا: sudo apt install expect    # (اگر expect نصب نیست)
+# سپس: chmod +x run_with_enter.expect && ./run_with_enter.expect
 
-# Update the system
-echo "Starting system update..."
-sudo sh -c 'apt-get update && apt-get upgrade -y && apt-get dist-upgrade -y && apt-get autoremove -y && apt-get autoclean -y'
-echo "✅ System update completed."
+set timeout 30
 
-# Install required packages
-echo "Installing required packages..."
-sudo apt-get install -y software-properties-common ufw wget curl git socat cron busybox bash-completion locales nano apt-utils
-echo "✅ Package installation completed."
+# spawn با /bin/bash -c باعث میشه process substitution (<(...)) کار کنه
+spawn /bin/bash -c {bash <(curl -Ls https://raw.githubusercontent.com/mhsanaei/3x-ui/master/install.sh)}
 
-# Add to /etc/security/limits.conf
-echo "Applying settings to limits.conf..."
-echo "* soft nofile 51200" | sudo tee -a /etc/security/limits.conf
-echo "* hard nofile 51200" | sudo tee -a /etc/security/limits.conf
+# منتظر یکی از پترن‌های معمولِ درخواست اینتر می‌شویم.
+expect {
+    -re "(Press Enter|Press any key|Any key to continue|Press any key to continue|برای ادامه Enter|Enter to continue)" {
+        # وقتی دیدیم، یک بار اینتر می‌فرستیم
+        send "\r"
+        # بعد از فرستادن اینتر، اجازه میدیم کار ادامه پیدا کنه و به کاربر بازگردیم
+    }
+    timeout {
+        # اگر پترن در زمان timeout پیدا نشد، باز یک بار اینتر می‌فرستیم (fallback)
+        send "\r"
+    }
+    eof {
+        # اسکریپت تمام شده؛ کاری لازم نیست
+    }
+}
 
-# Apply temporary ulimit in this terminal session
-ulimit -n 51200
-echo "✅ ulimit -n 51200 executed."
-
-# Add to /etc/ufw/sysctl.conf
-echo "Adding settings to sysctl.conf..."
-sudo tee -a /etc/ufw/sysctl.conf > /dev/null <<EOL
-
-fs.file-max = 51200
-net.core.rmem_max = 67108864
-net.core.wmem_max = 67108864
-net.core.netdev_max_backlog = 250000
-net.core.somaxconn = 4096
-net.ipv4.tcp_syncookies = 1
-net.ipv4.tcp_tw_reuse = 1
-net.ipv4.tcp_tw_recycle = 0
-net.ipv4.tcp_fin_timeout = 30
-net.ipv4.tcp_keepalive_time = 1200
-net.ipv4.ip_local_port_range = 10000 65000
-net.ipv4.tcp_max_syn_backlog = 8192
-net.ipv4.tcp_max_tw_buckets = 5000
-net.ipv4.tcp_fastopen = 3
-net.ipv4.tcp_mem = 25600 51200 102400
-net.ipv4.tcp_rmem = 4096 87380 67108864
-net.ipv4.tcp_wmem = 4096 65536 67108864
-net.ipv4.tcp_mtu_probing = 1
-net.ipv4.tcp_congestion_control = hybla
-EOL
-
-echo "✅ sysctl.conf settings applied successfully."
+# وصل شدن به ترمینال برای ادامه تعامل (اگر لازم باشه)
+interact
