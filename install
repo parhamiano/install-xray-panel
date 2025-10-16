@@ -1,6 +1,6 @@
 #!/bin/bash
 # نصب پیش‌نیازها
-sudo apt update && sudo apt install -y expect curl
+sudo apt update && sudo apt install -y expect curl jq
 
 # دریافت دامنه از کاربر
 read -p "Enter your domain (e.g. uk2.dadklnad.com): " DOMAIN
@@ -9,9 +9,50 @@ read -p "Enter your domain (e.g. uk2.dadklnad.com): " DOMAIN
 
 # استخراج بخش اول دامنه (قبل از اولین نقطه)
 SUBDOMAIN=$(echo "$DOMAIN" | cut -d'.' -f1)
+BASE_DOMAIN=$(echo "$DOMAIN" | awk -F. '{print $(NF-1)"."$NF}')
+
+
 CLOUDFLARE_API_TOKEN="your_cloudflare_api_token_here"
-ZONE_NAME="mrkheyrabadi.top"
+ZONE_NAME="$BASE_DOMAIN"
 IP=$(curl -s ifconfig.me)
+
+# =========================
+# گرفتن Zone ID
+# =========================
+ZONE_ID=$(curl -s -X GET "https://api.cloudflare.com/client/v4/zones?name=${ZONE_NAME}" \
+     -H "Authorization: Bearer ${CLOUDFLARE_API_TOKEN}" \
+     -H "Content-Type: application/json" | jq -r '.result[0].id')
+
+if [[ -z "$ZONE_ID" || "$ZONE_ID" == "null" ]]; then
+  echo "❌ Zone ID for ${ZONE_NAME} not found. Check your API token and domain."
+  exit 1
+fi
+
+echo "✅ Zone ID: $ZONE_ID"
+
+# =========================
+# ایجاد رکورد DNS برای ساب‌دامین
+# =========================
+RESPONSE=$(curl -s -X POST "https://api.cloudflare.com/client/v4/zones/${ZONE_ID}/dns_records" \
+     -H "Authorization: Bearer ${CLOUDFLARE_API_TOKEN}" \
+     -H "Content-Type: application/json" \
+     --data "{
+       \"type\": \"A\",
+       \"name\": \"${SUBDOMAIN}.${ZONE_NAME}\",
+       \"content\": \"${IP}\",
+       \"ttl\": 3600,
+       \"proxied\": false
+     }")
+
+SUCCESS=$(echo "$RESPONSE" | jq -r '.success')
+
+if [[ "$SUCCESS" == "true" ]]; then
+  echo "✅ Subdomain ${SUBDOMAIN}.${ZONE_NAME} successfully added → IP: ${IP}"
+else
+  echo "❌ Failed to add subdomain. Full response:"
+  echo "$RESPONSE" | jq
+  exit 1
+fi
 
 
 # نصب 3x-ui با پاسخ خودکار
