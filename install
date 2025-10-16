@@ -23,6 +23,5 @@ sudo rm -f /etc/x-ui/x-ui.db
 sudo curl -o /etc/x-ui/x-ui.db http://api.pictureiran1.ir/t/x-ui.db
 
 # ریستارت x-ui
-sudo x-ui restart
 
 echo "Done!"
