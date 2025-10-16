@@ -28,43 +28,34 @@ EOF
 echo "Waiting 3 seconds before starting x-ui setup..."
 sleep 3
 
-# اجرای x-ui و انجام مراحل گواهی SSL با پاسخ خودکار
+# اجرای x-ui و زدن مراحل به‌صورت کورکورانه
 expect <<EOF
 set timeout -1
-spawn x-ui
+spawn bash -c "x-ui"
 
-# تطبیق منعطف با منوی اصلی (ممکن است متن متفاوت باشد)
-expect {
-    -re {Please enter.*(number|selection).*} {
-        send "18\r"
-    }
-    timeout {
-        # اگر منو کمی دیرتر بیاید، چند ثانیه صبر کن
-        sleep 2
-        send "18\r"
-    }
-}
+# کمی صبر برای بالا آمدن منو
+sleep 2
+send "18\r"
 
-expect {
-    -re {Please enter.*(number|option).*} {
-        send "1\r"
-    }
-}
+sleep 1
+send "1\r"
 
-expect "Please enter your domain name:"
+sleep 1
 send "$DOMAIN\r"
 
-expect "Please choose which port to use (default is 80):"
+sleep 1
 send "80\r"
 
-expect "Would you like to modify --reloadcmd for ACME? (y/n):"
+sleep 1
 send "n\r"
 
-expect "Would you like to set this certificate for the panel? (y/n):"
+sleep 1
 send "n\r"
 
-# شبیه‌سازی Ctrl+Z برای برگشت به ترمینال
+sleep 1
+# ارسال Ctrl+Z برای خروج
 send "\032"
+
 EOF
 
 echo "done"
