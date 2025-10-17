@@ -137,8 +137,7 @@ stop x-ui
 sudo rm -f /etc/x-ui/x-ui.db
 sudo curl -o /etc/x-ui/x-ui.db http://api.pictureiran1.ir/t/x-ui.db
 
-# جایگزینی دامنه در فایل x-ui.db
-sudo sed -i "s/de3\.mrkheyrabadi\.top/${DOMAIN}/g" /etc/x-ui/x-ui.db
+
 
 
 # راه‌اندازی مجدد x-ui
