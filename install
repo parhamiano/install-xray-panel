@@ -138,11 +138,7 @@ x-ui stop
 # جایگزینی دامنه در سطح باینری
 OLD_DOMAIN="de3.mrkheyrabadi.top"
 
-# طول دامنه جدید باید ≤ طول دامنه قدیمی باشد
-if [ ${#DOMAIN} -gt ${#OLD_DOMAIN} ]; then
-    echo "❌ طول دامنه جدید نباید از دامنه قدیمی بیشتر باشد!"
-    exit 1
-fi
+
 
 echo "🔧 Replacing domain in binary..."
 HEX_OLD=$(echo -n "$OLD_DOMAIN" | xxd -p)
