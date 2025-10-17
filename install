@@ -3,7 +3,7 @@
 sudo apt update && sudo apt install -y expect curl jq
 
 # دریافت دامنه از کاربر
-read -p "Enter your domain (e.g. uk2.dadklnad.com): " DOMAIN
+read -p "Enter your domain (e.g. uk2.mrkheyrabadi.top): " DOMAIN
 
 
 
