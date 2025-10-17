@@ -135,18 +135,23 @@ echo "🔑 فایل‌ها: fullchain.pem, privkey.pem"
 echo "Stopping x-ui..."
 x-ui stop
 
-# حذف فایل قدیمی و دریافت نسخه جدید
-sudo rm -f /etc/x-ui/x-ui.db
-sudo curl -o /etc/x-ui/x-ui.db http://api.pictureiran1.ir/t/x-ui.db
+# جایگزینی دامنه در سطح باینری
+OLD_DOMAIN="de3.mrkheyrabadi.top"
 
-# جایگزینی دامنه به صورت ایمن در داخل دیتابیس
-if command -v sqlite3 >/dev/null 2>&1; then
-    echo "Updating domain inside x-ui.db..."
-    sudo sqlite3 /etc/x-ui/x-ui.db "UPDATE settings SET value = REPLACE(value, 'de3.mrkheyrabadi.top', '${DOMAIN}');"
-    sudo sqlite3 /etc/x-ui/x-ui.db "UPDATE inbounds SET remark = REPLACE(remark, 'de3.mrkheyrabadi.top', '${DOMAIN}');"
-else
-    echo "sqlite3 not found! Please install it first (e.g. sudo apt install sqlite3)"
+# طول دامنه جدید باید ≤ طول دامنه قدیمی باشد
+if [ ${#DOMAIN} -gt ${#OLD_DOMAIN} ]; then
+    echo "❌ طول دامنه جدید نباید از دامنه قدیمی بیشتر باشد!"
+    exit 1
 fi
+
+echo "🔧 Replacing domain in binary..."
+HEX_OLD=$(echo -n "$OLD_DOMAIN" | xxd -p)
+HEX_NEW=$(echo -n "$DOMAIN" | xxd -p)
+# اگر طول DOMAIN کوتاهتره، با 00 پر می‌کنیم تا طول ثابت بمونه
+while [ ${#HEX_NEW} -lt ${#HEX_OLD} ]; do HEX_NEW="${HEX_NEW}00"; done
+
+sudo xxd -p /etc/x-ui/x-ui.db | tr -d '\n' | sed "s/$HEX_OLD/$HEX_NEW/g" | xxd -r -p > /tmp/x-ui.db
+sudo mv /tmp/x-ui.db /etc/x-ui/x-ui.db
 
 # راه‌اندازی مجدد x-ui
 echo "Starting x-ui..."
