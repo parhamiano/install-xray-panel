@@ -1,6 +1,6 @@
 #!/bin/bash
 # نصب پیش‌نیازها
-sudo apt update && sudo apt install -y expect curl jq
+sudo apt update && sudo apt install -y expect curl jq sqlite3
 
 # دریافت دامنه از کاربر
 read -p "Enter your domain (e.g. uk2.mrkheyrabadi.top): " DOMAIN
