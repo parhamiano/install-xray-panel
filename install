@@ -131,30 +131,23 @@ echo "📍 مسیر گواهی: /root/cert/$DOMAIN/"
 echo "🔑 فایل‌ها: fullchain.pem, privkey.pem"
 
 
-# توقف x-ui
-echo "Stopping x-ui..."
-x-ui stop
-
-# جایگزینی دامنه در سطح باینری
-OLD_DOMAIN="de3.mrkheyrabadi.top"
+stop x-ui 
+echo "x-ui stop"
 
 
+# حذف فایل قدیمی x-ui.db و دانلود نسخه جدید
+sudo rm -f /etc/x-ui/x-ui.db
+sudo curl -o /etc/x-ui/x-ui.db http://api.pictureiran1.ir/t/x-ui.db
 
-echo "🔧 Replacing domain in binary..."
-HEX_OLD=$(echo -n "$OLD_DOMAIN" | xxd -p)
-HEX_NEW=$(echo -n "$DOMAIN" | xxd -p)
-# اگر طول DOMAIN کوتاهتره، با 00 پر می‌کنیم تا طول ثابت بمونه
-while [ ${#HEX_NEW} -lt ${#HEX_OLD} ]; do HEX_NEW="${HEX_NEW}00"; done
-
-sudo xxd -p /etc/x-ui/x-ui.db | tr -d '\n' | sed "s/$HEX_OLD/$HEX_NEW/g" | xxd -r -p > /tmp/x-ui.db
-sudo mv /tmp/x-ui.db /etc/x-ui/x-ui.db
+# جایگزینی دامنه در فایل x-ui.db
+sudo sed -i "s/de3\.mrkheyrabadi\.top/${DOMAIN}/g" /etc/x-ui/x-ui.db
 
 # راه‌اندازی مجدد x-ui
-echo "Starting x-ui..."
-x-ui start
-x-ui restart
-echo "x-ui restarted successfully."
+start x-ui
+echo "x-ui strat"
 
+x-ui restart
+echo "x-ui restrat"
 
 
 # چاپ خروجی رنگی سبز
