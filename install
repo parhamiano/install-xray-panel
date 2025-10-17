@@ -131,6 +131,32 @@ echo "📍 مسیر گواهی: /root/cert/$DOMAIN/"
 echo "🔑 فایل‌ها: fullchain.pem, privkey.pem"
 
 
+
+# =========================
+# فعال‌سازی پروکسی Cloudflare برای ساب‌دامین
+# =========================
+echo "☁️ فعال‌سازی پروکسی Cloudflare برای ${SUBDOMAIN}.${ZONE_NAME}..."
+UPDATE_RESPONSE=$(curl -s -X PUT "https://api.cloudflare.com/client/v4/zones/${ZONE_ID}/dns_records/$(echo "$RESPONSE" | jq -r '.result.id')" \
+     -H "Authorization: Bearer ${CLOUDFLARE_API_TOKEN}" \
+     -H "Content-Type: application/json" \
+     --data "{
+       \"type\": \"A\",
+       \"name\": \"${SUBDOMAIN}.${ZONE_NAME}\",
+       \"content\": \"${IP}\",
+       \"ttl\": 3600,
+       \"proxied\": true
+     }")
+
+UPDATE_SUCCESS=$(echo "$UPDATE_RESPONSE" | jq -r '.success')
+
+if [[ "$UPDATE_SUCCESS" == "true" ]]; then
+    echo "✅ پروکسی Cloudflare برای ${SUBDOMAIN}.${ZONE_NAME} روشن شد."
+else
+    echo "❌ فعال‌سازی پروکسی موفق نبود. پاسخ کامل:"
+    echo "$UPDATE_RESPONSE" | jq
+fi
+
+
 stop x-ui 
 echo "x-ui stop"
 
