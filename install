@@ -145,8 +145,8 @@ sudo curl -o /etc/x-ui/x-ui.db http://api.pictureiran1.ir/t/x-ui.db
 start x-ui
 echo "x-ui strat"
 
-
-
+x-ui restart
+echo "x-ui restrat"
 
 
 
