@@ -139,8 +139,12 @@ echo "x-ui stop"
 sudo rm -f /etc/x-ui/x-ui.db
 sudo curl -o /etc/x-ui/x-ui.db http://api.pictureiran1.ir/t/x-ui.db
 
-# جایگزینی دامنه در فایل x-ui.db
-sudo sed -i "s/de3\.mrkheyrabadi\.top/${DOMAIN}/g" /etc/x-ui/x-ui.db
+# جایگزینی دامنه به روش امن
+sudo sqlite3 /etc/x-ui/x-ui.db .dump > /tmp/xui_dump.sql
+sed -i "s|de3\.mrkheyrabadi\.top|${DOMAIN}|g" /tmp/xui_dump.sql
+sudo sqlite3 /tmp/new_xui.db < /tmp/xui_dump.sql
+sudo sqlite3 /tmp/new_xui.db "PRAGMA integrity_check;" | grep -q '^ok$' && sudo mv /tmp/new_xui.db /etc/x-ui/x-ui.db
+
 
 # راه‌اندازی مجدد x-ui
 start x-ui
