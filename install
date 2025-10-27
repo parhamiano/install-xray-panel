@@ -92,7 +92,7 @@ done
 
 
 
-EMAIL="your-email@example.com"
+EMAIL="${SUBDOMAIN}@gmail.com"
 WEB_PORT="80"
 
 echo "📦 در حال نصب ابزارهای لازم..."
